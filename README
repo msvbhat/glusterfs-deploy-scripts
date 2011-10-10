@@ -1,0 +1,4 @@
+These scripts can be used to install and deploy glusterfs in a cluster. 
+It installs the specified version of glusterfs in all the nodes of the 
+cluster parallelly and reports back the result. The result which is 
+reported back says pass or fail and in case of fail where it is failed.
