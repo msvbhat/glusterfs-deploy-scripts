@@ -1,0 +1,9 @@
+This is my configfile
+
+IP addresses of the nodes
+NODES_IP_ADDRS="ec2-50-19-178-104.compute-1.amazonaws.com,ec2-107-20-108-235.compute-1.amazonaws.com,ec2-107-20-94-243.compute-1.amazonaws.com,ec2-50-17-71-95.compute-1.amazonaws.com,ec2-107-20-89-30.compute-1.amazonaws.com"
+GLUSTER_TARBALL="glusterfs-3.3.0qa14.tar.gz"
+NODE_BUILD_DIR="/home/hadoop/Gluster"
+
+
+the end of config file
