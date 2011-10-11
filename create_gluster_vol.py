@@ -30,7 +30,13 @@ def get_server_export_dir():
         print 'Unable to find the server export directory. Please set SERVER_EXPORT_DIR in configfile'
         sys.exit(1)
 
-    return match.group(1)
+    export_dir = match.group(1)
+    invalid_export_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/']
+    if export_dir in invalid_export_dir:
+        print export_dir + ' can NOT be the server export directory. Please give other valid directory'
+        sys.exit(1)
+
+    return export_dir
 
 
 
@@ -128,6 +134,19 @@ def get_trans_type():
 
 
 
+def pre_create_cleanup(nodes, export_dir):
+    for node in nodes:
+        cmd = 'rm -rf ' + export_dir
+        run_helper.run_command(node, cmd, False) 
+
+        cmd = 'rm -rf /etc/glusterd'
+        run_helper.run_command(node, cmd, False) 
+
+        cmd = 'rm -rf /usr/local/var/log/glusterfs/'
+        run_helper.run_command(node, cmd, False) 
+
+    return 0
+
 
 def create_gluster_volume():
     mgmt_node = get_mgmt_node()
@@ -140,6 +159,9 @@ def create_gluster_volume():
     vol_type = get_volume_type()
     trans_type = get_trans_type()
     volname = get_vol_name()
+
+    pre_create_cleanup(nodes, export_dir)
+    sys.exit(1)
 
     brick_list = ''
     for node in nodes:

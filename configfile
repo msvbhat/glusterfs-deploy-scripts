@@ -25,7 +25,7 @@ REPLICA_COUNT="2"
 STRIPE_COUNT="2"
 
 #specify the export bricks (backend disks) of the servers here. List the absolute path of the export directory.
-SERVER_EXPORT_DIR="/home/export_brick"
+SERVER_EXPORT_DIR="/tmp/brick"
 
 #Specify the transport type of the volume. Possible values are tcp, rdma and tcp,rdma
 TRANS_TYPE="tcp,rdma"
