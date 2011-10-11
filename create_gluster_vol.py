@@ -156,6 +156,9 @@ def create_gluster_volume():
     vol_create_cmd = 'gluster volume create ' + volname + ' ' + replica_count + ' ' + stripe_count + ' ' + 'transport ' + trans_type + ' ' + brick_list
 
     for node in nodes:
+        run_helper.run_command(node, 'glusterd', False)
+
+    for node in nodes:
         if node != mgmt_node:
             run_helper.run_command(mgmt_node, 'gluster peer probe ' + node, False)
 
