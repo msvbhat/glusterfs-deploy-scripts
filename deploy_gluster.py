@@ -57,7 +57,7 @@ def check_exit_status(node, exit_status):
     return 0
 
 
-def install_gluster(node, tarball, build_dir):
+def real_install_gluster(node, tarball, build_dir):
         match = re.search(r'([\w.-]+).tar.gz', tarball)
         target_dir = match.group(1)
 
@@ -79,7 +79,7 @@ def install_gluster(node, tarball, build_dir):
 
 
 
-def main():
+def install_gluster():
     nodes = run_helper.get_nodes_ip()
 
     tarball = get_tarball()
@@ -97,7 +97,7 @@ def main():
 
     threads = []
     for node in nodes:
-        t = threading.Thread(target=install_gluster, args=(node, tarball, build_dir))
+        t = threading.Thread(target=real_install_gluster, args=(node, tarball, build_dir))
         t.start()
         threads.append(t)
 
@@ -108,4 +108,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    install_gluster()
