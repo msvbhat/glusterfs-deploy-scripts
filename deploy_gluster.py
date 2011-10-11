@@ -31,7 +31,7 @@ def get_biuld_dir():
     configtext = fc.read()
     fc.close()
 
-    match = re.search(r'NODE_BUILD_DIR="([\w/]+)"', configtext)
+    match = re.search(r'NODE_BUILD_DIR="(\S+)"', configtext)
     if not match:
         print 'Unable to find the build directory. Please set the proper NODE_BUILD_DIR in the config file'
         sys.exit(1)

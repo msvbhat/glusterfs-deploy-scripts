@@ -25,28 +25,6 @@ def get_nodes_ip():
     return nodes
 
 
-#to get username and password for the  all nodes
-def get_username_password():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-    umatch = re.search(r'USERNAME="(\w+)"', configtext)
-    if not umatch:
-        print 'unable to find the username. Defaulting to \'root\''
-        username = 'root'
-    else:
-        username = umatch.group(1)
-
-    pmatch = re.search(r'PASSWORD="(\w+)"', configtext)
-    if not pmatch:
-        print 'unable to find the password. Assuming passwordless ssh is setup between all the machines'
-        password = ''
-    else:
-        password = pmatch.group(1)
-
-    return (username, password)
-
-
 #run commands in the remote machine
 def run_command(node, cmd, verbose):
 
@@ -70,6 +48,7 @@ def run_command(node, cmd, verbose):
         ssh_handle.close()
 
         return None
+
 
 #Do scp to node machine using scp command
 def rcopy(node, srcfile, destpath, verbose):

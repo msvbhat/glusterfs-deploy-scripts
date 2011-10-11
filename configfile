@@ -1,12 +1,31 @@
-specify the IP addresses or hostnames of the nodes below separated by ',' as shown below.
-NODES_IP_ADDRS="192.168.1.22,192.168.1.65"
+#specify the IP addresses or hostnames of the nodes below separated by ',' as shown below.
+NODES_IP_ADDRS="192.168.1.22,192.168.1.65,192.168.1.62"
 
-specify the glusterfs version belowlike shown
+#specify the glusterfs version belowlike shown
 GLUSTER_TARBALL="glusterfs-3.3.0qa14.tar.gz"
 
-specify the directory structure in each machine where glusterfs tarball will be untarred and installed.
+#specify the directory structure in each machine where glusterfs tarball will be untarred and installed.
 NODE_BUILD_DIR="/home/hadoop/Gluster"
 
-username and password of machines. It is assumed that each machine has same username and password.
-USERNAME="root"
-PASSWORD="xxxx"
+#specify a management node ip -addr or valid resolvable hostname here. Management node should be part of nodes-ip-address listed above. This node is used to execute all the gluster cli commands.
+MGMT_NODE="192.168.1.65"
+
+#Specify the volume name here.
+VOLNAME="hosdu"
+
+#specify the volume type here. Possible values are dist -- distributed , rep -- replicated , stripe -- striped,
+#dist-rep -- distributed-replicated , stripe-rep -- striped-replicated , dist-stripe --- distributed-stripe,
+dist-stripe-rep -- distibuted striped replicated
+VOL_TYPE="dist-stripe-rep"
+
+#Specify the replica count here.
+REPLICA_COUNT="2"
+
+#Specify the stripe count here.
+STRIPE_COUNT="2"
+
+#specify the export bricks (backend disks) of the servers here. List the absolute path of the export directory.
+SERVER_EXPORT_DIR="/home/export_brick"
+
+#Specify the transport type of the volume. Possible values are tcp, rdma and tcp,rdma
+TRANS_TYPE="tcp,rdma"
