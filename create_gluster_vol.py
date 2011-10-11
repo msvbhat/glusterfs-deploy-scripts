@@ -136,6 +136,9 @@ def get_trans_type():
 
 def pre_create_cleanup(nodes, export_dir):
     for node in nodes:
+        cmd = 'pgrep gluster | xargs kill -9'
+        run_helper.run_command(node, cmd, False) 
+
         cmd = 'rm -rf ' + export_dir
         run_helper.run_command(node, cmd, False) 
 
