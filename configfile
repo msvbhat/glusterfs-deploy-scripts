@@ -7,3 +7,6 @@ GLUSTER_TARBALL="glusterfs-3.3.0qa14.tar.gz"
 specify the directory structure in each machine where glusterfs tarball will be untarred and installed.
 NODE_BUILD_DIR="/home/hadoop/Gluster"
 
+username and password of machines. It is assumed that each machine has same username and password.
+USERNAME="root"
+PASSWORD="xxxx"

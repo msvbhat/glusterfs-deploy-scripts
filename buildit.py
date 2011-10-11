@@ -14,8 +14,8 @@ def main():
     ap = subprocess.Popen(['./autogen.sh'], stdout=faout, stderr=faerr).wait()
     faout.close()
     faerr.close()
-    if ap:
-        sys.exit(1)
+#    if ap:
+#        sys.exit(1)
 
 #Run configure
     fcout = open('configure.out.remote', 'w')

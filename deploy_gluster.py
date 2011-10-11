@@ -67,7 +67,7 @@ def real_install_gluster(node, tarball, build_dir):
         run_helper.rcopy(node, 'buildit.py', build_dir + '/' + target_dir, False)
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(node, username='root', password='syst3m')
+        ssh.connect(node, username='root', password='')
         chan = ssh.get_transport().open_session()
         chan.exec_command('cd ' + build_dir + '/' + target_dir + ' && ./buildit.py')
         print 'build started on ' + node
