@@ -145,7 +145,7 @@ def pre_create_cleanup(nodes, export_dir):
         cmd = 'rm -rf /etc/glusterd'
         run_helper.run_command(node, cmd, False) 
 
-        cmd = 'rm -rf /usr/local/var/log/glusterfs/'
+        cmd = 'rm -rf /usr/local/var/log/glusterfs/*'
         run_helper.run_command(node, cmd, False) 
 
     return 0

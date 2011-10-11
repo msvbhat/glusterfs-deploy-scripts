@@ -61,6 +61,7 @@ def real_install_gluster(node, tarball, build_dir):
         match = re.search(r'([\w.-]+).tar.gz', tarball)
         target_dir = match.group(1)
 
+        run_helper.run_command(node, 'rm -rf ' + build_dir + '*', False)
         run_helper.run_command(node, 'mkdir -p ' + build_dir, False)
         run_helper.rcopy(node, tarball, build_dir, False)
         run_helper.run_command(node, 'cd ' + build_dir + ' && tar -xzf ' + tarball, False)
@@ -94,6 +95,14 @@ def install_gluster():
 
 
     build_dir = get_biuld_dir()
+    if build_dir[-1] != '/':
+        build_dir = build_dir + '/'
+
+    invalid_build_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/']
+    if build_dir in invalid_build_dir:
+        print build_dir + ' can not be build directory. Please provide other build directory'
+        sys.exit(1)
+
 
     threads = []
     for node in nodes:
