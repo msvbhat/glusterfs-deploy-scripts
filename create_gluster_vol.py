@@ -164,7 +164,6 @@ def create_gluster_volume():
     volname = get_vol_name()
 
     pre_create_cleanup(nodes, export_dir)
-    sys.exit(1)
 
     brick_list = ''
     for node in nodes:
