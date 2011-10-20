@@ -4,6 +4,7 @@ import sys, os
 import run_helper
 import re
 import getopt
+import threading
 
 
 def usage():
@@ -11,17 +12,16 @@ def usage():
     print '[-r "install rdma"] [-a "install all"}'
     return 0
 
-def install_rpm(nodes, version, rpms):
-    for node in nodes:
-        for rpm in rpms:
-            cmd = 'rpm -Uvh http://bits.gluster.com/pub/gluster/glusterfs/' + version + '/x86_64/glusterfs-' + rpm + '-' + version + '-1.x86_64.rpm'
-            run_helper.run_command(node, cmd, True)
+def install_rpm(node, version, rpms):
+    for rpm in rpms:
+        cmd = 'rpm -Uvh http://bits.gluster.com/pub/gluster/glusterfs/' + version + '/x86_64/glusterfs-' + rpm + '-' + version + '-1.x86_64.rpm'
+        run_helper.run_command(node, cmd, True)
 
     return 0
 
 
 
-def main():
+def install_gluster_rpms():
     opt = arg = []
     try:
         opt, arg = getopt.getopt(sys.argv[1:], "dgra", ["debuginfo", "georep", "rdma", "all"])
@@ -67,11 +67,18 @@ def main():
         sys.exit(1)
     version = match.group(1)
 
-    install_rpm(nodes, version, rpms)
+    threads = []
+    for node in nodes:
+        t = threading.Thread(target=install_rpm, args=(node, version, rpms))
+        t.start()
+        threads.append(t)
+
+    for t in threads:
+        t.join()
 
     return 0
 
 
 
 if __name__ == '__main__':
-    main()
+    install_gluster_rpms()
