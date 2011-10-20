@@ -73,9 +73,6 @@ def get_gluster_version():
 #run commands in the remote machine
 def run_command(node, cmd, verbose):
 
-        if verbose == True:
-            print 'node: ' + node
-            print 'command: ' + cmd
         ssh_handle = paramiko.SSHClient()
         ssh_handle.load_system_host_keys()
         ssh_handle.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -86,6 +83,8 @@ def run_command(node, cmd, verbose):
             print 'unable to excecute the command ' + cmd + ' on the remote server ' + node
 
         if verbose == True:
+            print 'node: ' + node
+            print 'command: ' + cmd
             print fout.read()
             print ferr.read()
             print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
