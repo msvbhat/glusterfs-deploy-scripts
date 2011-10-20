@@ -32,7 +32,7 @@ def install_gluster_rpms():
 
     rpms = ['core', 'fuse']
 
-    for k in opt:
+    for k , v in opt:
         if k in ("-d", "--debuginfo"):
             rpms.append('debuginfo')
         elif k in ("-g", "--georep"):
