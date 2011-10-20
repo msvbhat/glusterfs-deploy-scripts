@@ -1,13 +1,18 @@
-#specify the IP addresses or hostnames of the nodes below separated by ',' as shown below.
-NODES_IP_ADDRS="192.168.1.22,192.168.1.69,192.168.1.62"
+#specify the IP addresses or hostnames of the nodes below separated by ',' as shown below. It's used for installation and also for creating volume
+#If you want to have more than one brick in one machine, then you can give same machine many times below.
+NODES_IP_ADDRS="192.168.1.22,192.168.1.69,192.168.1.62,192.168.1.22"
 
-#specify the glusterfs version belowlike shown
-GLUSTER_TARBALL="glusterfs-3.3.0qa14.tar.gz"
+#Specify the IP address of the client here. It's used only for installation.
+CLIENT_IP_ADDRS="192.168.1.64"
+
+#specify the glusterfs version below, like shown
+GLUSTER_VERSION="glusterfs-3.3.0qa14.tar.gz"
 
 #specify the directory structure in each machine where glusterfs tarball will be untarred and installed.
 NODE_BUILD_DIR="/home/hadoop/Gluster"
 
-#specify a management node ip -addr or valid resolvable hostname here. Management node should be part of nodes-ip-address listed above. This node is used to execute all the gluster cli commands.
+#specify a management node ip addr or valid resolvable hostname here. This node is used ONLY to execute all the gluster cli commands. THIS MUST BE PART OF THE NODES_IP_ADDRESS.
+#If not the glusterfs will not be installed in the management node.
 MGMT_NODE="192.168.1.69"
 
 #Specify the volume name here.

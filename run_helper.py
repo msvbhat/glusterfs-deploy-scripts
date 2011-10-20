@@ -25,11 +25,57 @@ def get_nodes_ip():
     return nodes
 
 
+#get the client ip
+def get_client_ip():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+    match = re.search(r'CLIENT_IP_ADDRS="([\w.,-]+)"', configtext)
+    if not match:
+        print 'unable to find client IP address. Please set CLIENT_IP_ADDRS'
+        sys.exit(1)
+
+    clients = match.group(1).split(',')
+
+    return clients
+
+
+#get management node ip
+def get_mgmt_node():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+
+    match = re.search(r'MGMT_NODE="([\w.-]+)"', configtext)
+    if not match:
+        print 'Unable to find the management node. Please set the MGMT_NODE in configfile'
+        sys.exit(1)
+
+    return match.group(1)
+
+
+#get the version of glusterfs
+def get_gluster_version():
+    fc = open('configfile', 'r')
+    configtext = fc.read()
+    fc.close()
+
+    tarball_match = re.search(r'GLUSTER_VERSION="(glusterfs-[\w.]+)"', configtext)
+    if not tarball_match:
+        print 'Unable to find the gluster version. Please set the GLUSTER_VERSION in config file'
+        sys.exit(1)
+
+    tarball = tarball_match.group(1)
+
+    return tarball
+
+
 #run commands in the remote machine
 def run_command(node, cmd, verbose):
 
         if verbose == True:
-            print '>>>>>>>>>>>>>>> executing command "' + cmd + '" on remote machine "' + node + '" <<<<<<<<<<<<<<<<<<<<<<<'
+            print 'node: ' + node
+            print 'command: ' + cmd
         ssh_handle = paramiko.SSHClient()
         ssh_handle.load_system_host_keys()
         ssh_handle.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -40,10 +86,9 @@ def run_command(node, cmd, verbose):
             print 'unable to excecute the command ' + cmd + ' on the remote server ' + node
 
         if verbose == True:
-            print 'output:'
             print fout.read()
-            print 'error:'
             print ferr.read()
+            print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
             print '\n\n'
         ssh_handle.close()
 
@@ -94,14 +139,17 @@ def main():
         else:
             assert False, "unhandled option"
 
+    all_nodes = get_nodes_ip()
+    nodes = []
+    for node in all_nodes:
+        if node not in nodes:
+            nodes.append(node)
 
     if remoterun == True:
-        nodes = get_nodes_ip()
         for node in nodes:
             run_command(node, cmd, True)
 
     if scpsend == True:
-        nodes = get_nodes_ip()
         for node in nodes:
             rcopy(node, sfile, destpath, True)
 

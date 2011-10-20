@@ -10,22 +10,6 @@ import threading
 
 
 
-def get_tarball():
-    fc = open('configfile', 'r')
-    configtext = fc.read()
-    fc.close()
-
-    tarball_match = re.search(r'GLUSTER_TARBALL="([\w.-]+.tar.gz)"', configtext)
-    if not tarball_match:
-        print 'ERROR: Empty tarball. Please set the GLUSTER_TARBALL in config file'
-        sys.exit(1)
-
-    tarball = tarball_match.group(1)
-
-    return tarball
-
-
-
 def get_biuld_dir():
     fc = open('configfile' , 'r')
     configtext = fc.read()
@@ -81,9 +65,23 @@ def real_install_gluster(node, tarball, build_dir):
 
 
 def install_gluster():
-    nodes = run_helper.get_nodes_ip()
+    all_nodes = run_helper.get_nodes_ip()
+    nodes = []
+    for node in all_nodes:
+        if node not in nodes:
+            nodes.append(node)
 
-    tarball = get_tarball()
+    clients = run_helper.get_client_ip()
+    for client in clients:
+        if client not in nodes:
+            nodes.append(client)
+
+    gluster_version = run_helper.get_gluster_version()
+    if gluster_version[-7:] != '.tar.gz':
+        tarball = gluster_version + '.tar.gz'
+    else:
+        tarball = gluster_version
+
     if not os.path.exists(tarball):
         print 'INFO: Source tarball ' + tarball + ' doesn\'t exist. Proceeding to download from bits.gluster.com'
         download_url = 'http://bits.gluster.com/pub/gluster/glusterfs/src/' + tarball

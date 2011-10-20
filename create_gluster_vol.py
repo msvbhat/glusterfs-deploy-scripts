@@ -5,21 +5,6 @@ import re
 import run_helper
 
 
-
-def get_mgmt_node():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-
-    match = re.search(r'MGMT_NODE="([\w.-]+)"', configtext)
-    if not match:
-        print 'Unable to find the management node. Please set the MGMT_NODE in configfile'
-        sys.exit(1)
-
-    return match.group(1)
-
-
-
 def get_server_export_dir():
     f = open('configfile', 'r')
     configtext = f.read()
@@ -152,10 +137,10 @@ def pre_create_cleanup(nodes, export_dir):
 
 
 def create_gluster_volume():
-    mgmt_node = get_mgmt_node()
+    mgmt_node = run_helper.get_mgmt_node()
     nodes = run_helper.get_nodes_ip()
     if mgmt_node not in nodes:
-        print 'management node should be part of the nodes listed in configfile. Please set the proper management node'
+        print 'management node MUST be part of the server nodes'
         sys.exit(1)
 
     export_dir = get_server_export_dir()
@@ -195,6 +180,7 @@ def create_gluster_volume():
 
 def start_gluster_volume():
     volname = get_vol_name()
+    mgmt_node = get_mgmt_node();
     vol_start_cmd = 'gluster volume start ' + volname
     run_helper.run_command(mgmt_node, vol_start_cmd, True)
 
