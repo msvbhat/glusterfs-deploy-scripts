@@ -173,7 +173,7 @@ def create_gluster_volume():
 
     run_helper.run_command(mgmt_node, vol_create_cmd, True)
 
-    return 0
+    return None
 
 
 
@@ -184,7 +184,7 @@ def start_gluster_volume():
     vol_start_cmd = 'gluster volume start ' + volname
     run_helper.run_command(mgmt_node, vol_start_cmd, True)
 
-    return 0
+    return None
 
 
 

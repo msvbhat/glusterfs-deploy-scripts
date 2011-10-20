@@ -11,7 +11,7 @@ def usage():
     print '[-r "install rdma"] [-a "install all"}'
     return 0
 
-def install_rpm(nodes, ,version, rpms):
+def install_rpm(nodes, version, rpms):
     for node in nodes:
         for rpm in rpms:
             cmd = 'rpm -Uvh http://bits.gluster.com/pub/gluster/glusterfs/' + version + '/x86_64/glusterfs-' + rpm + '-' + version + '-1.x86_64.rpm'
@@ -74,4 +74,4 @@ def main():
 
 
 if __name__ == '__main__':
-  install_rpm()
+    main()
