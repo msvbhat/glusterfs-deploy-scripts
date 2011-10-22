@@ -155,9 +155,10 @@ def main():
             nodes.append(node)
 
     if in_all_machines == True:
-        client_ip = get_client_ip()
-        if client_ip not in nodes:
-            nodes.append(client_ip)
+        client_ips = get_client_ip()
+        for client_ip in client_ips:
+            if client_ip not in nodes:
+                nodes.append(client_ip)
 
     if remoterun == True:
         for node in nodes:
