@@ -82,20 +82,23 @@ def run_command(node, cmd, verbose):
         except:
             print 'unable to excecute the command ' + cmd + ' on the remote server ' + node
 
-        output = fout.read()
-        error = ferr.read()
         if verbose == True:
-            print 'node: ' + node
-            print 'command: ' + cmd
-            print output
-            print error
+            output = fout.read()
+            error = ferr.read()
+            print 'node: ' + node + '\ncommand: ' + cmd + '\n' + output + '\n' + error
             print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
             print '\n\n'
+            del output
+            del error
         ssh_handle.close()
-        del output
-        del error
+        del fout
+        del ferr
 
         return None
+
+#NOTE: I just used del above because somehow I think if i get large output it might just use up system's memory.
+#      I may be wrong in using them here. Just need more investigation.
+
 
 
 #Do scp to node machine using scp command
