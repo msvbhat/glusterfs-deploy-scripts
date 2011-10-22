@@ -83,22 +83,15 @@ def run_command(node, cmd, verbose):
             print 'unable to excecute the command ' + cmd + ' on the remote server ' + node
 
         if verbose == True:
-            output = fout.read()
-            error = ferr.read()
-            print 'node: ' + node + '\ncommand: ' + cmd + '\n' + output + '\n' + error
+            print 'node: ' + node + '\ncommand: ' + cmd + '\n' + fout.read() + '\n' + ferr.read()
             print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
             print '\n\n'
-            del output
-            del error
         ssh_handle.close()
-        del fout
-        del ferr
 
         return None
 
-#NOTE: I just used del above because somehow I think if i get large output it might just use up system's memory.
-#      I may be wrong in using them here. Just need more investigation.
-
+#NOTE: I'm not sure how mush of above code is robust. Because if the remote machine sends back enough data to fill the 'channel file object' then,
+#      host (this machine) may hang. Need a better way to handle this issue. Current code just assumes that the remote machine doesn't send lot of data.
 
 
 #Do scp to node machine using scp command
