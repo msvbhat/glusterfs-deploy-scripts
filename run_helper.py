@@ -119,30 +119,45 @@ def rcopy(node, srcfile, destpath, verbose):
 def main():
     opt = arg = []
     try:
-        opt, arg = getopt.getopt(sys.argv[1:], "c:r:", ["copy=", "run="])
+        opt, arg = getopt.getopt(sys.argv[1:], "c:r:C:R:", ["copy=", "run=", "Run=", "Copy="])
     except getopt.GetoptError, err:
         print str(err)
         usage()
         sys.exit(1)
 
-    scpsend = remoterun = None
+    scpsend = remoterun = in_all_machines = None
     for k, v in opt:
         if k in ("-c", "--copy"):
             scpsend = True
             filepath = v.split(':')
-            sfile = filepath[0]
-            destpath = filepath[1]
+        elif k in ("-C", "--Copy"):
+            scpsend = True
+            filepath = v.split(':')
+            in_all_machines = True
         elif k in ("-r", "--run"):
             remoterun = True
             cmd = v
+        elif k in ("-R", "--Run"):
+            remoterun = True
+            cmd = v
+            in_all_machines = True
         else:
             assert False, "unhandled option"
+
+    if scpsend == True:
+        sfile = filepath[0]
+        destpath = filepath[1]
 
     all_nodes = get_nodes_ip()
     nodes = []
     for node in all_nodes:
         if node not in nodes:
             nodes.append(node)
+
+    if in_all_machines == True:
+        client_ip = get_client_ip()
+        if client_ip not in nodes:
+            nodes.append(client_ip)
 
     if remoterun == True:
         for node in nodes:

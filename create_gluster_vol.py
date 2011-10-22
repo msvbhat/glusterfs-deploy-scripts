@@ -180,7 +180,7 @@ def create_gluster_volume():
 
 def start_gluster_volume():
     volname = get_vol_name()
-    mgmt_node = get_mgmt_node();
+    mgmt_node = run_helper.get_mgmt_node();
     vol_start_cmd = 'gluster volume start ' + volname
     run_helper.run_command(mgmt_node, vol_start_cmd, True)
 
