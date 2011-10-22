@@ -82,14 +82,18 @@ def run_command(node, cmd, verbose):
         except:
             print 'unable to excecute the command ' + cmd + ' on the remote server ' + node
 
+        output = fout.read()
+        error = ferr.read()
         if verbose == True:
             print 'node: ' + node
             print 'command: ' + cmd
-            print fout.read()
-            print ferr.read()
+            print output
+            print error
             print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
             print '\n\n'
         ssh_handle.close()
+        del output
+        del error
 
         return None
 
