@@ -90,8 +90,8 @@ def run_command(node, cmd, verbose):
 
         return None
 
-#NOTE: I'm not sure how mush of above code is robust. Because if the remote machine sends back enough data to fill the 'channel file object' then,
-#      host (this machine) may hang. Need a better way to handle this issue. Current code just assumes that the remote machine doesn't send lot of data.
+#NOTE: I'm not sure how mush of above code is robust. Because if the remote machine sends back enough data to fill the buffer of 'channel file object' then,
+#      host (this machine) may hang forever. Need a better way to handle this issue. Current code just assumes that the remote machine doesn't send lot of data.
 
 
 #Do scp to node machine using scp command
