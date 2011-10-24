@@ -1,19 +1,17 @@
-#specify the IP addresses or hostnames of the nodes below separated by ',' as shown below. It's used for installation and also for creating volume
-#If you want to have more than one brick in one machine, then you can give same machine many times below.
-NODES_IP_ADDRS="192.168.1.22,192.168.1.69,192.168.1.62,192.168.1.22"
+#specify the IP addresses or hostnames of the server_ip nodes below separated by ',' as shown below.
+SERVER_IP_ADDRS="192.168.1.22,192.168.1.69,192.168.1.62"
 
-#Specify the IP address of the client here. It's used only for installation.
+#Specify the IP address or hostnames of clients here.
 CLIENT_IP_ADDRS="192.168.1.64"
 
-#specify the glusterfs version below, like shown
+#specify the glusterfs version below. '.tar.gz' at the end can be omitted. Scripts extract only version.
 GLUSTER_VERSION="glusterfs-3.3.0qa14.tar.gz"
 
-#specify the directory structure in each machine where glusterfs tarball will be untarred and installed.
+#specify the directory where glusterfs tarball will be untarred and installed.
 NODE_BUILD_DIR="/home/hadoop/Gluster"
 
-#specify a management node ip addr or valid resolvable hostname here. This node is used ONLY to execute all the gluster cli commands. THIS MUST BE PART OF THE NODES_IP_ADDRESS.
-#If not the glusterfs will not be installed in the management node.
-MGMT_NODE="192.168.1.69"
+#specify a management node ip addr or valid resolvable hostname here. This node is used ONLY to execute all the gluster cli commands. THIS MUST BE PART OF THE SERVER MACHINES LISTED ABOVE.
+MGMT_NODE="192.168.1.22"
 
 #Specify the volume name here.
 VOLNAME="hosdu"
@@ -23,10 +21,10 @@ VOLNAME="hosdu"
 dist-stripe-rep -- distibuted striped replicated
 VOL_TYPE="dist-stripe-rep"
 
-#Specify the replica count here.
+#Specify the replica count here. Can be omitted for distribute only and stripe only volumes.
 REPLICA_COUNT="2"
 
-#Specify the stripe count here.
+#Specify the stripe count here. can be omitted for replicate and distribute only volumes.
 STRIPE_COUNT="2"
 
 #specify the export bricks (backend disks) of the servers here. List the absolute path of the export directory.

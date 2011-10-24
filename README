@@ -1,4 +1,108 @@
-These scripts can be used to install and deploy glusterfs in a cluster. 
-It installs the specified version of glusterfs in all the nodes of the 
-cluster parallelly and reports back the result. The result which is 
-reported back says pass or fail and in case of fail where it is failed.
+These scripts can be used to install and deploy glusterfs in a cluster.
+It installs the specified version of glusterfs in all the nodes of the
+luster parallelly and reports back the result.
+It can be used to create and start a volume in big cluster. Specifications
+abou the volume can be set in configfile
+
+
+Here is a list of each script and what it accomplishes
+--------------------------------------------------------------------------
+1. run_helper.py
+
+It can be used to run any command in the all the nodes.It assumes that the
+passwordless ssh is set between host machine and remote machines. This
+script also has the general functions for getting server ip, client ip etc.
+This script can take 4 options which is listed below.
+
+'-r' or '--run'  --> run command in the server machines
+'-R' or '--Run'  --> same as '-r' but runs in all machines which includes
+                     server and clients.
+'-c' or '--copy' --> copy file to all the server machines. source path in
+                     host and destination in server machines are separated
+                     by a ':'
+'-C' or '--Copy' --> same as '-c' but copies to all machines which includes
+                     both servers and clients.
+
+For example:
+./run_helper.py -r 'ifconfig'
+Above command runs ifconfig in all server machines and displayes the result
+in hist machine
+
+./run_helper.py -R 'ifconfig'
+This runs above command in both servers and clients and display the result.
+
+./run_helper.py -c /home/source_file:/root/destination_file
+Above command copies /home/source_file to all /root/destination_file in all
+the servers. Note that the source and destination is separated by ':'.
+---------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------
+2. buildit.py
+
+This script just builds the glusterfs tarball. It assumes that configure file
+is in 'pwd'.
+This script is used by deploy script to build the glusterfs tarball.
+---------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------
+3. deploy_gluster.py
+
+This script builds the glusterfs tarball and displays the result to the host
+machine console. The version of glusterfs build directory and server and client
+ip-address/hostnames should be listed in the 'configfile'. Follow the
+descriptions in each feild of 'configfile'
+If the seocified version of glusterfs is not present in the 'pwd' then the
+script downloads it from bits.gluster.com and installs it.
+Installation is always done in both server and client.
+
+Usage Example:
+./deploy_gluster.py
+---------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------
+4. install_gluster_rpm.py
+
+This scipt installs the gluster via rpms. Version of glusterfs should be
+specified in the 'configfile'. Version can be specified as .tar.gz too.
+Script has the intelligence to parse the version and install via rpm.
+
+This by default installs only 'core' and 'fuse' rpms. It take take extra
+options to install other rpms too.
+
+'-d' or '--debug' --> install glusterfs-debuginfo rpm along with defaults.
+
+'-g' or '--georep' --> Install glusterfs-geo-replication rpm along with defaults.
+
+'-r' or '--rdma' --> Install glusterfs-rdma rpm along with defaults.
+
+'-a' or '--alll' --> Install all glusterfs rpms of specifed version.
+
+For Example:
+./install_gluster_rpm.py -r
+Installs 'core', 'fuse' and 'rdma' rpms
+-----------------------------------------------------------------------------
+
+
+
+-----------------------------------------------------------------------------
+5. create_gluster_vol.py
+
+Creates gluster volume of specifed configuration. volume type, transport type
+replica count, stripe count, server export directories all have to be specified
+in the config file. replica count and stripe count can be left blank for distribute
+only volumes.Follow the descriptions on each feild of configfile for more details.
+
+It can take an additional argument '--start-vol' which also starts volume.
+
+Usage Example;
+./create_gluster_vol.py
+Creats the volume
+
+./create_gluster_vol.py --start-vol
+Creates and starts the volume
+-------------------------------------------------------------------------------

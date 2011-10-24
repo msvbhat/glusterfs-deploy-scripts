@@ -15,7 +15,7 @@ def get_nodes_ip():
     f = open('configfile', 'r')
     configtext = f.read()
     f.close()
-    match = re.search(r'NODES_IP_ADDRS="([\w.,-]+)"', configtext)
+    match = re.search(r'SERVER_IP_ADDRS="([\w.,-]+)"', configtext)
     if not match:
         print 'unable to find the ip addresses of the machines'
         sys.exit(1)
