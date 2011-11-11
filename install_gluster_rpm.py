@@ -21,28 +21,7 @@ def install_rpm(node, version, rpms):
 
 
 
-def install_gluster_rpms():
-    opt = arg = []
-    try:
-        opt, arg = getopt.getopt(sys.argv[1:], "dgra", ["debuginfo", "georep", "rdma", "all"])
-    except getopt.GetoptError, err:
-        print str(err)
-        usage()
-        sys.exit(1)
-
-    rpms = ['core', 'fuse']
-
-    for k , v in opt:
-        if k in ("-d", "--debuginfo"):
-            rpms.append('debuginfo')
-        elif k in ("-g", "--georep"):
-            rpms.append('geo-replication')
-        elif k in ("-r", "--rdma"):
-            rpms.append('rdma')
-        elif k in ("-a", "--all"):
-            rpms = ['core', 'fuse', 'debuginfo', 'geo-replication', 'rdma']
-        else:
-            rpms = rpms
+def install_gluster_rpms(rpms):
 
     all_nodes = run_helper.get_nodes_ip()
     nodes = []
@@ -80,5 +59,33 @@ def install_gluster_rpms():
 
 
 
+def main():
+    opt = arg = []
+    try:
+        opt, arg = getopt.getopt(sys.argv[1:], "dgra", ["debuginfo", "georep", "rdma", "all"])
+    except getopt.GetoptError, err:
+        print str(err)
+        usage()
+        sys.exit(1)
+
+    rpms = ['core', 'fuse']
+
+    for k , v in opt:
+        if k in ("-d", "--debuginfo"):
+            rpms.append('debuginfo')
+        elif k in ("-g", "--georep"):
+            rpms.append('geo-replication')
+        elif k in ("-r", "--rdma"):
+            rpms.append('rdma')
+        elif k in ("-a", "--all"):
+            rpms = ['core', 'fuse', 'debuginfo', 'geo-replication', 'rdma']
+        else:
+            rpms = rpms
+
+    status = install_gluster_rpms(rpms)
+
+    return status
+
+
 if __name__ == '__main__':
-    install_gluster_rpms()
+    main()

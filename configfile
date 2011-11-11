@@ -10,6 +10,9 @@ GLUSTER_VERSION="glusterfs-3.3.0qa14.tar.gz"
 #specify the directory where glusterfs tarball will be untarred and installed.
 NODE_BUILD_DIR="/home/hadoop/Gluster"
 
+#Specify the git repo here
+GIT_REPO="/gluster/glusterfs/"
+
 #specify a management node ip addr or valid resolvable hostname here. This node is used ONLY to execute all the gluster cli commands. THIS MUST BE PART OF THE SERVER MACHINES LISTED ABOVE.
 MGMT_NODE="192.168.1.22"
 
@@ -32,3 +35,10 @@ SERVER_EXPORT_DIR="/tmp/brick"
 
 #Specify the transport type of the volume. Possible values are tcp, rdma and tcp,rdma
 TRANS_TYPE="tcp,rdma"
+
+#specify the mountpoint
+MOUNTPOINT="/mnt/"
+
+#specify the mount point i.e client protocol here. valid values are 'nfs' and 'fuse' and 'rdma'. Specify 'rdma' only in case of tcp,rdma transport type.
+#Else it wil lbe rejected
+MOUNT_TYPE="rdma"

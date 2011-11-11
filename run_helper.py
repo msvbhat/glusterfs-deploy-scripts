@@ -70,6 +70,19 @@ def get_gluster_version():
     return tarball
 
 
+def get_git_repo():
+    f = open('configfile', 'r')
+    configtext =f.read()
+    f.close()
+
+    match = re.search(r'GIT_REPO="(\S+)"', configtext)
+    if not match:
+        print 'Unable to find the git repo. Please set the GIT_REPO in configfile'
+        sys.exit(1)
+
+    return match.group(1)
+
+
 #run commands in the remote machine
 def run_command(node, cmd, verbose):
 

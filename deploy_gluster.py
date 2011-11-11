@@ -64,7 +64,7 @@ def real_install_gluster(node, tarball, build_dir):
 
 
 
-def install_gluster():
+def install_gluster(tarball):
     all_nodes = run_helper.get_nodes_ip()
     nodes = []
     for node in all_nodes:
@@ -76,12 +76,6 @@ def install_gluster():
         if client not in nodes:
             nodes.append(client)
 
-    gluster_version = run_helper.get_gluster_version()
-    if gluster_version[-7:] != '.tar.gz':
-        tarball = gluster_version + '.tar.gz'
-    else:
-        tarball = gluster_version
-
     if not os.path.exists(tarball):
         print 'INFO: Source tarball ' + tarball + ' doesn\'t exist. Proceeding to download from bits.gluster.com'
         download_url = 'http://bits.gluster.com/pub/gluster/glusterfs/src/' + tarball
@@ -91,7 +85,6 @@ def install_gluster():
         except:
             print 'unable to download ' + tarball + ' from bits.gluster.com'
 
-
     build_dir = get_biuld_dir()
     if build_dir[-1] != '/':
         build_dir = build_dir + '/'
@@ -100,7 +93,6 @@ def install_gluster():
     if build_dir in invalid_build_dir:
         print build_dir + ' can not be build directory. Please provide other build directory'
         sys.exit(1)
-
 
     threads = []
     for node in nodes:
@@ -114,5 +106,17 @@ def install_gluster():
     return 0
 
 
+
+def main_installer():
+    gluster_version = run_helper.get_gluster_version()
+    if gluster_version[-7:] != '.tar.gz':
+        tarball = gluster_version + '.tar.gz'
+    else:
+        tarball = gluster_version
+
+    install_gluster(tarball)
+
+    return 0
+
 if __name__ == '__main__':
-    install_gluster()
+    main_installer()
