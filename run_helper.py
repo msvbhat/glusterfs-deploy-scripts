@@ -100,7 +100,7 @@ def run_command(node, cmd, verbose):
         ferr = chan.makefile_stderr('rb')
         ret_code = chan.recv_exit_status()
         if verbose == True:
-            print 'node: ' + node + '\ncommand: ' + cmd + '\n' + 'exit status: ' + ret_code + '\n' + fout.read() + '\n' + ferr.read()
+            print 'node: ' + node + '\ncommand: ' + cmd + '\n' + 'exit status: %d' % ret_code + '\n' + fout.read() + '\n' + ferr.read()
             print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
             print '\n\n'
         ssh_handle.close()

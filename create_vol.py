@@ -226,8 +226,9 @@ def main():
     
     if start:
         status = start_gluster_volume()
-        print 'Exiting...'
-        sys.exit(1)
+        if status:
+            print 'Exiting...'
+            sys.exit(1)
 
     return status
 
