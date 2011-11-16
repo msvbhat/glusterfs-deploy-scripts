@@ -5,6 +5,7 @@ import run_helper
 import re
 import getopt
 import threading
+import Queue
 
 
 def usage():
@@ -12,12 +13,17 @@ def usage():
     print '[-r "install rdma"] [-a "install all"}'
     return 0
 
-def install_rpm(node, version, rpms):
+def install_rpm(node, version, rpms, ret_queue):
+    flag = 0
     for rpm in rpms:
         cmd = 'rpm -Uvh http://bits.gluster.com/pub/gluster/glusterfs/' + version + '/x86_64/glusterfs-' + rpm + '-' + version + '-1.x86_64.rpm'
-        run_helper.run_command(node, cmd, True)
+        status = run_helper.run_command(node, cmd, True)
+        if status:
+            flag = 1
 
-    return 0
+    ret_queue.put(flag)
+
+    return None
 
 
 
@@ -46,16 +52,25 @@ def install_gluster_rpms(rpms):
         sys.exit(1)
     version = match.group(1)
 
+    ret_queue = Queue.Queue()
     threads = []
     for node in nodes:
-        t = threading.Thread(target=install_rpm, args=(node, version, rpms))
+        t = threading.Thread(target=install_rpm, args=(node, version, rpms, ret_queue))
         t.start()
         threads.append(t)
 
+    ret_codes = []
     for t in threads:
         t.join()
+        ret_codes.append(ret_queue.get())
 
-    return 0
+    ret_value = 0
+    for ret in ret_codes:
+        if ret != 0:
+            ret_value = 1
+            break
+
+    return ret_value
 
 
 
@@ -83,6 +98,8 @@ def main():
             rpms = rpms
 
     status = install_gluster_rpms(rpms)
+    if status:
+        print 'rpm installatin went Bananas in some machine. Please look into it.'
 
     return status
 
