@@ -16,7 +16,7 @@ def get_server_export_dir():
         sys.exit(1)
 
     export_dir = match.group(1)
-    invalid_export_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/']
+    invalid_export_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/']
     if export_dir in invalid_export_dir:
         print export_dir + ' can NOT be the server export directory. Please give other valid directory'
         sys.exit(1)

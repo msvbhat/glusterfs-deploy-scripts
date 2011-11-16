@@ -86,7 +86,7 @@ def install_gluster(tarball):
     if build_dir[-1] != '/':
         build_dir = build_dir + '/'
 
-    invalid_build_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/']
+    invalid_build_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/']
     if build_dir in invalid_build_dir:
         print build_dir + ' can not be build directory. Please provide other build directory'
         sys.exit(1)
@@ -98,12 +98,12 @@ def install_gluster(tarball):
         t.start()
         threads.append(t)
 
-    return_value = 0
     ret_codes = []
     for t in threads:
         t.join()
         ret_codes.append(ret_queue.get())
 
+    return_value = 0
     for ret in ret_codes:
         if ret != 0:
             return_value = 1
