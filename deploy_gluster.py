@@ -7,6 +7,7 @@ import re
 import paramiko
 import run_helper
 import threading
+import Queue
 
 
 
@@ -41,7 +42,7 @@ def check_exit_status(node, exit_status):
     return 0
 
 
-def real_install_gluster(node, tarball, build_dir):
+def real_install_gluster(node, tarball, build_dir, ret_queue):
         match = re.search(r'([\w.-]+).tar.gz', tarball)
         target_dir = match.group(1)
 
@@ -59,6 +60,7 @@ def real_install_gluster(node, tarball, build_dir):
 
         exit_status = chan.recv_exit_status()
         check_exit_status(node, exit_status)
+        ret_queue.put(exit_status)
 
         return 0
 
@@ -94,16 +96,25 @@ def install_gluster(tarball):
         print build_dir + ' can not be build directory. Please provide other build directory'
         sys.exit(1)
 
+    ret_queue = Queue.Queue()
     threads = []
     for node in nodes:
-        t = threading.Thread(target=real_install_gluster, args=(node, tarball, build_dir))
+        t = threading.Thread(target=real_install_gluster, args=(node, tarball, build_dir, ret_queue))
         t.start()
         threads.append(t)
 
+    return_value = 0
+    ret_codes = []
     for t in threads:
         t.join()
+        ret_codes.append(ret_queue.get())
 
-    return 0
+    for ret in ret_codes:
+        if ret != 0:
+            return_value = 1
+            break
+
+    return return_value
 
 
 
@@ -114,9 +125,11 @@ def main_installer():
     else:
         tarball = gluster_version
 
-    install_gluster(tarball)
+    status = install_gluster(tarball)
+    if status:
+        print 'Installation went Bananas. Please look into it.'
 
-    return 0
+    return status
 
 if __name__ == '__main__':
     main_installer()
