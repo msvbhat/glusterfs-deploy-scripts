@@ -51,14 +51,9 @@ def real_install_gluster(node, tarball, build_dir, ret_queue):
         run_helper.rcopy(node, tarball, build_dir, False)
         run_helper.run_command(node, 'cd ' + build_dir + ' && tar -xzf ' + tarball, False)
         run_helper.rcopy(node, 'buildit.py', build_dir + '/' + target_dir, False)
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(node, username='root', password='')
-        chan = ssh.get_transport().open_session()
-        chan.exec_command('cd ' + build_dir + '/' + target_dir + ' && ./buildit.py')
+        exit_status = run_helper.run_command(node, 'cd ' + build_dir + '/' + target_dir + ' && ./buildit.py', False)
         print 'build started on ' + node
 
-        exit_status = chan.recv_exit_status()
         check_exit_status(node, exit_status)
         ret_queue.put(exit_status)
 

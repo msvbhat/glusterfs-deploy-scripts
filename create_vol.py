@@ -164,16 +164,34 @@ def create_gluster_volume():
 
     vol_create_cmd = 'gluster volume create ' + volname + ' ' + replica_count + ' ' + stripe_count + ' ' + 'transport ' + trans_type + ' ' + brick_list
 
+    flag = 0
     for node in nodes:
-        run_helper.run_command(node, 'glusterd', False)
+        status = run_helper.run_command(node, 'glusterd', False)
+        if status:
+            print 'glusterd can not be started in node: ' + node
+            flag = 1
 
+    if flag:
+        print 'glusterd can not be started successfully in all nodes. Exiting...'
+        sys.exit(1)
+
+    flag = 0
     for node in nodes:
         if node != mgmt_node:
-            run_helper.run_command(mgmt_node, 'gluster peer probe ' + node, False)
+            status = run_helper.run_command(mgmt_node, 'gluster peer probe ' + node, False)
+            if status:
+                print 'peer probe went wrong in ' + node
+                flag = 1
 
-    run_helper.run_command(mgmt_node, vol_create_cmd, True)
+    if flag:
+        print 'Peer probe went wrong in some machines. Exiting...'
+        sys.exit(1)
 
-    return 0
+    status = run_helper.run_command(mgmt_node, vol_create_cmd, True)
+    if status:
+        print 'volume creation failed.'
+
+    return status
 
 
 
@@ -182,9 +200,11 @@ def start_gluster_volume():
     volname = get_vol_name()
     mgmt_node = run_helper.get_mgmt_node();
     vol_start_cmd = 'gluster volume start ' + volname
-    run_helper.run_command(mgmt_node, vol_start_cmd, True)
+    status = run_helper.run_command(mgmt_node, vol_start_cmd, True)
+    if status:
+        print 'volume starting failed.'
 
-    return None
+    return status
 
 
 
@@ -199,12 +219,17 @@ def main():
         if args[0] != '--start-vol':
             start = False
 
-    create_gluster_volume()
+    status = create_gluster_volume()
+    if status:
+        print 'Exiting...'
+        sys.exit(1)
     
     if start:
-        start_gluster_volume()
+        status = start_gluster_volume()
+        print 'Exiting...'
+        sys.exit(1)
 
-    return 0
+    return status
 
 if __name__ == '__main__':
     main()

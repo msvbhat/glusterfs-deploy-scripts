@@ -90,18 +90,22 @@ def run_command(node, cmd, verbose):
         ssh_handle.load_system_host_keys()
         ssh_handle.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh_handle.connect(node, username='root', password='')
+        chan = ssh_handle.get_transport().open_session()
         try:
-            (fin, fout, ferr) = ssh_handle.exec_command(cmd)
+            chan.exec_command(cmd)
         except:
             print 'unable to excecute the command ' + cmd + ' on the remote server ' + node
 
+        fout = chan.makefile('rb')
+        ferr = chan.makefile_stderr('rb')
+        ret_code = chan.recv_exit_status()
         if verbose == True:
-            print 'node: ' + node + '\ncommand: ' + cmd + '\n' + fout.read() + '\n' + ferr.read()
+            print 'node: ' + node + '\ncommand: ' + cmd + '\n' + 'exit status: ' + ret_code + '\n' + fout.read() + '\n' + ferr.read()
             print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
             print '\n\n'
         ssh_handle.close()
 
-        return None
+        return ret_code
 
 #NOTE: I'm not sure how mush of above code is robust. Because if the remote machine sends back enough data to fill the buffer of 'channel file object' then,
 #      host (this machine) may hang forever. Need a better way to handle this issue. Current code just assumes that the remote machine doesn't send lot of data.
