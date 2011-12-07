@@ -122,16 +122,26 @@ def get_trans_type():
 def pre_create_cleanup(nodes, export_dir):
     for node in nodes:
         cmd = 'pgrep gluster | xargs kill -9'
-        run_helper.run_command(node, cmd, False) 
+        run_helper.run_command(node, cmd, False)
 
         cmd = 'rm -rf ' + export_dir
-        run_helper.run_command(node, cmd, False) 
+        run_helper.run_command(node, cmd, False)
 
         cmd = 'rm -rf /etc/glusterd'
-        run_helper.run_command(node, cmd, False) 
+        run_helper.run_command(node, cmd, False)
 
         cmd = 'rm -rf /usr/local/var/log/glusterfs/*'
-        run_helper.run_command(node, cmd, False) 
+        run_helper.run_command(node, cmd, False)
+
+        cmd = 'rm -f /usr/local/var/log/glusterfs/.c*'
+        run_helper.run_command(node, cmd, False)
+
+
+        cmd = 'rm -rf /var/log/glusterfs/*'
+        run_helper.run_command(node, cmd, False)
+
+        cmd = 'rm -f /var/log/glusterfs/.c*'
+        run_helper.run_command(node, cmd, False)
 
     return 0
 

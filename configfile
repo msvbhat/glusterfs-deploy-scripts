@@ -42,3 +42,5 @@ MOUNTPOINT="/mnt/"
 #specify the mount point i.e client protocol here. valid values are 'nfs' and 'fuse' and 'rdma'. Specify 'rdma' only in case of tcp,rdma transport type.
 #Else it wil lbe rejected
 MOUNT_TYPE="rdma"
+
+LOG_ARCHIVE="/tmp/sanity-run"
