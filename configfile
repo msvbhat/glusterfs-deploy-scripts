@@ -44,3 +44,5 @@ MOUNTPOINT="/mnt/"
 MOUNT_TYPE="rdma"
 
 LOG_ARCHIVE="/tmp/sanity-run"
+
+EMAIL="vishwanath@shell.domain.com:/home/vishwanath/"
