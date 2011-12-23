@@ -11,19 +11,6 @@ import Queue
 
 
 
-def get_biuld_dir():
-    fc = open('configfile' , 'r')
-    configtext = fc.read()
-    fc.close()
-
-    match = re.search(r'NODE_BUILD_DIR="(\S+)"', configtext)
-    if not match:
-        print 'Unable to find the build directory. Please set the proper NODE_BUILD_DIR in the config file'
-        sys.exit(1)
-
-    return match.group(1)
-
-
 
 def check_exit_status(node, exit_status):
     if exit_status == 0:
@@ -82,7 +69,7 @@ def install_gluster(tarball):
         except:
             print 'unable to download ' + tarball + ' from bits.gluster.com'
 
-    build_dir = get_biuld_dir()
+    build_dir = run_helper.get_build_dir()
     if build_dir[-1] != '/':
         build_dir = build_dir + '/'
 

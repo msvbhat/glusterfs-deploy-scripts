@@ -83,6 +83,200 @@ def get_git_repo():
     return match.group(1)
 
 
+
+def get_build_dir():
+    fc = open('configfile' , 'r')
+    configtext = fc.read()
+    fc.close()
+
+    match = re.search(r'NODE_BUILD_DIR="(\S+)"', configtext)
+    if not match:
+        print 'Unable to find the build directory. Please set the proper NODE_BUILD_DIR in the config file'
+        sys.exit(1)
+
+    return match.group(1)
+
+
+
+def get_server_export_dir():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+
+    match = re.search(r'SERVER_EXPORT_DIR="(\S+)"', configtext)
+    if not match:
+        print 'Unable to find the server export directory. Please set SERVER_EXPORT_DIR in configfile'
+        sys.exit(1)
+
+    export_dir = match.group(1)
+    invalid_export_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/']
+    if export_dir in invalid_export_dir:
+        print export_dir + ' can NOT be the server export directory. Please give other valid directory'
+        sys.exit(1)
+
+    return export_dir
+
+
+
+
+def get_volume_type():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+
+    match = re.search(r'VOL_TYPE="([\w-]+)"', configtext)
+    if not match:
+        print 'Unable to find the gluster volume type. Please set the VOL_TYPE in configfile to proper gluster volume type'
+        sys.exit(1)
+
+    vol_type = match.group(1)
+    supported_vol_types = ['dist', 'rep', 'stripe', 'dist-rep', 'stripe-rep', 'dist-stripe-rep', 'dist-stripe']
+    if vol_type not in supported_vol_types:
+        print vol_type + ' is not a supported gluster volume type. Please set the proper volume type'
+        sys.exit(1)
+
+    return vol_type
+
+
+def get_vol_name():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+
+    match = re.search(r'VOLNAME="(\S+)"', configtext)
+    if not match:
+        print 'Unable to find the volume name. Please set VOLNAME in configfile'
+        sys.exit(1)
+
+    return match.group(1)
+
+
+
+def get_replica_count():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+
+    match = re.search(r'REPLICA_COUNT="(\d+)"', configtext)
+    if not match:
+        print 'Unable to find the replica count. Please set the REPLICA_COUNT in configfile'
+        sys.exit(1)
+
+    replica_count = match.group(1)
+    if replica_count < '2':
+        print 'replica count can not be less than 2'
+        sys.exit(1)
+
+    return replica_count
+
+
+
+def get_stripe_count():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+
+    match = re.search(r'STRIPE_COUNT="(\d+)"', configtext)
+    if not match:
+        print 'Unable to find the stripe count. Please set the STRIPE_COUNT in configfile'
+        sys.exit(1)
+
+    stripe_count = match.group(1)
+    if stripe_count < '2':
+        print 'stripe count can not be less than 2'
+        sys.exit(1)
+
+    return stripe_count
+
+
+
+def get_trans_type():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+
+    match = re.search(r'TRANS_TYPE="([\w,]+)"', configtext)
+    if not match:
+        print 'Unable to find the transport type. Please set the TRANS_TYPE in configfile to proper supported transport type'
+        sys.exit(1)
+
+    trans_type = match.group(1)
+    supported_trans_types = ['tcp', 'rdma', 'tcp,rdma']
+    if trans_type not in supported_trans_types:
+        print trans_type + ' is not a supported transport type. Please set the proper supported transport type'
+        sys.exit(1)
+
+    return trans_type
+
+
+
+def get_mountpoint():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+    match = re.search(r'MOUNTPOINT="(\S+)"', configtext)
+    if not match:
+        print 'unable to find the mount point'
+        sys.exit(1)
+
+    mountpoint = match.group(1)
+    invalid_mountpoints = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/']
+    if mountpoint in invalid_mountpoints:
+        print mountpoint + ' is not a valid mountpoint. Please provide a valid mountpoint. Aborting...'
+        sys.exit(1)
+
+    return mountpoint
+
+
+
+def get_mount_type():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+    match = re.search(r'MOUNT_TYPE="(\w+)"', configtext)
+    if not match:
+        print 'unable to find the valid mount type. Please specify the mount type in configfile'
+        sys.exit(1)
+
+    return match.group(1)
+
+
+
+def get_log_archive_dir():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+    match = re.search(r'LOG_ARCHIVE="(\S+)"', configtext)
+    if match:
+        log_archive = match.group(1)
+    else:
+        print 'LOG_ARCHIVE is not set in configfile. Using "/tmp/sanity-run" as deafult log dir'
+        log_archive = '/tmp/sanity-run'
+
+    return log_archive
+
+
+
+
+def get_send_mail_path():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+    match = re.search(r'EMAIL="(\S+)"', configtext)
+    if not match:
+        print 'EMAIL is not set in configfile. Not sending the results, just archiving'
+        email_path = None
+    else:
+        email_path = match.group(1)
+
+    return email_path
+
+
+
+
+
+
+
 #run commands in the remote machine
 def run_command(node, cmd, verbose):
 
