@@ -1,13 +1,65 @@
 #!/usr/bin/python
 
 import sys, os
-import shlex
+import shlex, shutil
 import subprocess
 import re
 import paramiko
 import run_helper
 import threading
 import Queue
+import getopt
+import commands
+import install_gluster_rpm
+
+
+
+def usage():
+    print './deploy_gluster [-g <git-branch> or --git <git-branch> | -t  or --tarball | -r or --rpm]'
+
+    return None
+
+
+def prepare_git_source(branch):
+    git_repo = run_helper.get_git_repo()
+    if git_repo[-1] == '/':
+        git_repo = git_repo[:-1]
+
+    target_dict = {'master' : '3git', 'release-3.2' : '3.2git'}
+    target = target_dict[branch]
+    print 'checking out glusterfs branch "' + branch + '"...'
+    status, output = commands.getstatusoutput('cd ' + git_repo + ' && git checkout ' + branch)
+    if status:
+        print output
+        sys.exit(1)
+
+    print 'updating the repo to current head (git pull)...'
+    status, output = commands.getstatusoutput('cd ' + git_repo + ' && git pull')
+    if status:
+        print output
+        sys.exit(1)
+
+    print 'removing old tarballs if any...'
+    os.system('rm -f ' + git_repo + '/glusterfs*.tar.gz')
+
+    print 'autogen and configuring for make dist...'
+    status, output = commands.getstatusoutput('cd ' + git_repo + ' && ./autogen.sh && ./configure --enable-fusermount')
+    if status:
+        print output
+        sys.exit(1)
+
+    print 'running make dist...'
+    status, output = commands.getstatusoutput('cd ' + git_repo + ' && make dist')
+    if status:
+        print output
+        sys.exit(1)
+
+    print 'copying the genarated tar ball to cwd...'
+    shutil.copy(git_repo + '/glusterfs-' + target + '.tar.gz', '.')
+
+    print 'successfully created tarball from git repo...'
+
+    return 'glusterfs-' + target + '.tar.gz'
 
 
 
@@ -38,8 +90,8 @@ def real_install_gluster(node, tarball, build_dir, ret_queue):
         run_helper.rcopy(node, tarball, build_dir, False)
         run_helper.run_command(node, 'cd ' + build_dir + ' && tar -xzf ' + tarball, False)
         run_helper.rcopy(node, 'buildit.py', build_dir + '/' + target_dir, False)
-        exit_status = run_helper.run_command(node, 'cd ' + build_dir + '/' + target_dir + ' && ./buildit.py', False)
         print 'build started on ' + node
+        exit_status = run_helper.run_command(node, 'cd ' + build_dir + '/' + target_dir + ' && ./buildit.py', False)
 
         check_exit_status(node, exit_status)
         ret_queue.put(exit_status)
@@ -113,5 +165,53 @@ def main_installer():
 
     return status
 
+
+
+
+
+
 if __name__ == '__main__':
-    main_installer()
+    opt = arg = []
+    try:
+        opt, arg = getopt.getopt(sys.argv[1:], "g:rt", ["git", "tar", "rpm"])
+    except getopt.GetoptError, err:
+        print str(err)
+        usage()
+        sys.exit(1)
+
+    installation_way = None
+    for k, v in opt:
+        if k in ("-g", "--git"):
+            installation_way = "git"
+            branch = v
+        elif k in ("-t", "--tar"):
+            installation_way = "tarball"
+        elif k in ("-r", "--rpm"):
+            installation_way = "rpm"
+        else:
+            assert False, "unhandled option"
+            usage()
+
+    if installation_way == "git":
+        git_branches = ['master', 'release-3.2']
+        if branch not in git_branches:
+            print '"' + branch + '"  is not a proper git branch. Please specify a proper git branch'
+            sys.exit(1)
+        print 'installing from git source...'
+        tarball = prepare_git_source(branch)
+        install_status = install_gluster(tarball)
+    elif installation_way == "tarball":
+        print 'instaling from tarball...'
+        install_status = main_installer()
+    elif installation_way == "rpm":
+        print 'installing from rpms...'
+        rpms = ['core', 'fuse', 'geo-replication']
+        install_status = install_gluster_rpm.install_gluster_rpms(rpms)
+    else:
+        print 'unhandled option'
+        usage()
+        sys.exit(1)
+
+    if install_status:
+        print 'Installation FAILED. Please look into it'
+        sys.exit(1)
