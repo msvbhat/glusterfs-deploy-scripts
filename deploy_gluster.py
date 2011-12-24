@@ -39,6 +39,7 @@ def prepare_git_source(branch):
         print output
         sys.exit(1)
 
+    status, git_head = commands.getstatusoutput('cd ' + git_repo + ' && git show --pretty="%H" -s')
     print 'removing old tarballs if any...'
     os.system('rm -f ' + git_repo + '/glusterfs*.tar.gz')
 
@@ -59,7 +60,7 @@ def prepare_git_source(branch):
 
     print 'successfully created tarball from git repo...'
 
-    return 'glusterfs-' + target + '.tar.gz'
+    return ('glusterfs-' + target + '.tar.gz', git_head)
 
 
 
@@ -198,7 +199,7 @@ if __name__ == '__main__':
             print '"' + branch + '"  is not a proper git branch. Please specify a proper git branch'
             sys.exit(1)
         print 'installing from git source...'
-        tarball = prepare_git_source(branch)
+        tarball, git_head = prepare_git_source(branch)
         install_status = install_gluster(tarball)
     elif installation_way == "tarball":
         print 'instaling from tarball...'
