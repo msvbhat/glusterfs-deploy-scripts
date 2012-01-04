@@ -117,10 +117,10 @@ def install_gluster(tarball):
         print 'INFO: Source tarball ' + tarball + ' doesn\'t exist. Proceeding to download from bits.gluster.com'
         download_url = 'http://bits.gluster.com/pub/gluster/glusterfs/src/' + tarball
         cmd = 'wget ' +  download_url
-        try:
-            os.system(cmd)
-        except:
-            print 'unable to download ' + tarball + ' from bits.gluster.com'
+        wget_status = os.system(cmd)
+        if wget_status:
+            print 'unable to download ' + tarball + ' from bits.gluster.com, \n Exiting...'
+            sys.exit(1)
 
     build_dir = run_helper.get_build_dir()
     if build_dir[-1] != '/':
