@@ -178,6 +178,7 @@ def get_options(args):
         sys.exit(1)
 
     installation_way = None
+    branch = None
     for k, v in opt:
         if k in ("-g", "--git"):
             installation_way = "git"
@@ -190,14 +191,14 @@ def get_options(args):
             assert False, "unhandled option"
             usage()
 
-    return installation_way
+    return (installation_way, branch)
 
 
 
 
 
 if __name__ == '__main__':
-    installation_way = get_options(sys.argv[1:])
+    installation_way, branch = get_options(sys.argv[1:])
     if installation_way == "git":
         git_branches = ['master', 'release-3.2']
         if branch not in git_branches:
