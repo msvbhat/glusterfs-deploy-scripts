@@ -168,13 +168,10 @@ def main_installer():
 
 
 
-
-
-
-if __name__ == '__main__':
+def get_options(args):
     opt = arg = []
     try:
-        opt, arg = getopt.getopt(sys.argv[1:], "g:rt", ["git", "tar", "rpm"])
+        opt, arg = getopt.getopt(args, "g:rt", ["git=", "tar", "rpm"])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -193,6 +190,14 @@ if __name__ == '__main__':
             assert False, "unhandled option"
             usage()
 
+    return installation_way
+
+
+
+
+
+if __name__ == '__main__':
+    installation_way = get_options(sys.argv[1:])
     if installation_way == "git":
         git_branches = ['master', 'release-3.2']
         if branch not in git_branches:
