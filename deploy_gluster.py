@@ -212,6 +212,9 @@ if __name__ == '__main__':
         install_status = main_installer()
     elif installation_way == "rpm":
         print 'installing from rpms...'
+        print 'WARNING: There are some know issues with this option. Please try',
+        print 'downloading the rpms and using run_helper.py to install rpms, ',
+        print 'should you encounter the error.'
         rpms = ['core', 'fuse', 'geo-replication']
         install_status = install_gluster_rpm.install_gluster_rpms(rpms)
     else:

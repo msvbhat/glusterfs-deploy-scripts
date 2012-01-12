@@ -97,6 +97,9 @@ def main():
         else:
             rpms = rpms
 
+    print 'WARNING: There are some know issues with this option. Please try',
+    print 'downloading the rpms and using run_helper.py to install rpms, ',
+    print 'should you encounter the error.'
     status = install_gluster_rpms(rpms)
     if status:
         print 'rpm installatin went Bananas in some machine. Please look into it.'
