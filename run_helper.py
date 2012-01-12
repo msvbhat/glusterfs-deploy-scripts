@@ -20,7 +20,11 @@ def get_nodes_ip():
         print 'unable to find the ip addresses of the machines'
         sys.exit(1)
 
-    nodes = match.group(1).split(',')
+    servers = match.group(1).split(',')
+    nodes = []
+    for server in servers:
+        if server not in nodes:
+            nodes.append(server)
 
     return nodes
 
@@ -109,10 +113,13 @@ def get_server_export_dir():
         sys.exit(1)
 
     export_dir = match.group(1)
-    invalid_export_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/']
+    invalid_export_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/', '/var'. '/var/', '/bin', '/bin/']
     if export_dir in invalid_export_dir:
         print export_dir + ' can NOT be the server export directory. Please give other valid directory'
         sys.exit(1)
+
+    if export_dir[-1] == '/':
+        export_dir = export_dir[:-1]
 
     return export_dir
 
@@ -224,6 +231,9 @@ def get_mountpoint():
     if mountpoint in invalid_mountpoints:
         print mountpoint + ' is not a valid mountpoint. Please provide a valid mountpoint. Aborting...'
         sys.exit(1)
+
+    if mountpoint[-1] == '/':
+        mountpoint = mountpoint[:-1]
 
     return mountpoint
 
@@ -359,11 +369,7 @@ def main():
         sfile = filepath[0]
         destpath = filepath[1]
 
-    all_nodes = get_nodes_ip()
-    nodes = []
-    for node in all_nodes:
-        if node not in nodes:
-            nodes.append(node)
+    nodes = get_nodes_ip()
 
     if in_all_machines == True:
         client_ips = get_client_ip()

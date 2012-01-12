@@ -102,11 +102,7 @@ def real_install_gluster(node, tarball, build_dir, ret_queue):
 
 
 def install_gluster(tarball):
-    all_nodes = run_helper.get_nodes_ip()
-    nodes = []
-    for node in all_nodes:
-        if node not in nodes:
-            nodes.append(node)
+    nodes = run_helper.get_nodes_ip()
 
     clients = run_helper.get_client_ip()
     for client in clients:
