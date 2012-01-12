@@ -113,7 +113,7 @@ def get_server_export_dir():
         sys.exit(1)
 
     export_dir = match.group(1)
-    invalid_export_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/', '/var'. '/var/', '/bin', '/bin/']
+    invalid_export_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/', '/var', '/var/', '/bin', '/bin/']
     if export_dir in invalid_export_dir:
         print export_dir + ' can NOT be the server export directory. Please give other valid directory'
         sys.exit(1)
@@ -282,6 +282,17 @@ def get_send_mail_path():
     return email_path
 
 
+
+def get_number_of_bricks():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+    match = re.search(r'NO_OF_BRICKS="(\d+)"', configtext)
+    if not match:
+        print 'Unable to get the number of bricks for volume. Please set NO_OF_BRICKS in configfile to proper value and retry'
+        sys.exit(1)
+
+    return match.group(1)
 
 
 

@@ -33,6 +33,9 @@ STRIPE_COUNT="2"
 #specify the export bricks (backend disks) of the servers here. List the absolute path of the export directory.
 SERVER_EXPORT_DIR="/tmp/brick"
 
+#specify here number of bricks volume should have. remember it should match the stripe/replica count'
+NO_OF_BRICKS="8"
+
 #Specify the transport type of the volume. Possible values are tcp, rdma and tcp,rdma
 TRANS_TYPE="tcp,rdma"
 
