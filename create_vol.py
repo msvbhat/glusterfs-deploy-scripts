@@ -12,6 +12,9 @@ def pre_create_cleanup(nodes, export_dir):
         cmd = 'pgrep gluster | xargs kill -9'
         run_helper.run_command(node, cmd, False)
 
+        cmd = 'mkdir -p ' + export_dir
+        run_helper.run_command(node, cmd, False)
+
         cmd = 'rm -rf ' + export_dir + '/*'
         run_helper.run_command(node, cmd, False)
 
@@ -67,7 +70,7 @@ def create_gluster_volume():
     if vol_type == 'stripe' or vol_type == 'stripe-rep' or vol_type == 'dist-stripe-rep' or vol_type == 'dist-stripe':
         stripe_count = 'stripe ' + run_helper.get_stripe_count()
 
-    vol_create_cmd = 'gluster volume create ' + volname + ' ' + replica_count + ' ' + stripe_count + ' ' + 'transport ' + trans_type + ' ' + ' '.join(brick_list)
+    vol_create_cmd = 'gluster volume create ' + volname + ' ' + replica_count + ' ' + stripe_count + ' ' + 'transport ' + trans_type + ' ' + ' '.join(brick_list) + ' --mode=script'
 
     flag = 0
     for node in nodes:
