@@ -38,10 +38,11 @@ the servers. Note that the source and destination is separated by ':'.
 
 
 ---------------------------------------------------------------------------
-2. buildit.py
+2. buildit.sh
 
 This script just builds the glusterfs tarball. It assumes that configure file
-is in 'pwd'.
+is in 'pwd'. If the prefix path is given as arguement then it installs gluster
+in that prefix path. Else default path (/usr/local/sbin/) is used.
 This script is used by deploy script to build the glusterfs tarball.
 ---------------------------------------------------------------------------
 

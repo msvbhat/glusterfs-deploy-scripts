@@ -10,6 +10,9 @@ GLUSTER_VERSION="glusterfs-3.3.0qa14.tar.gz"
 #specify the directory where glusterfs tarball will be untarred and installed.
 NODE_BUILD_DIR="/home/hadoop/Gluster"
 
+#specify the prefix path here. This is where glusterfs will be installed if one chooses to install gluster from source.
+PREFIX_PATH="/opt/glusterfs-3.3.0qa20"
+
 #Specify the git repo here
 GIT_REPO="/gluster/glusterfs/"
 

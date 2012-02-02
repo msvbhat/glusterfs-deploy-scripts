@@ -82,17 +82,17 @@ def check_exit_status(node, exit_status):
     return 0
 
 
-def real_install_gluster(node, tarball, build_dir, ret_queue):
+def real_install_gluster(node, tarball, build_dir, prefix_path, ret_queue):
         match = re.search(r'([\w.-]+).tar.gz', tarball)
         target_dir = match.group(1)
 
-        run_helper.run_command(node, 'rm -rf ' + build_dir + '*', False)
+        run_helper.run_command(node, 'rm -rf ' + build_dir + target_dir + '*', False)
         run_helper.run_command(node, 'mkdir -p ' + build_dir, False)
         run_helper.rcopy(node, tarball, build_dir, False)
         run_helper.run_command(node, 'cd ' + build_dir + ' && tar -xzf ' + tarball, False)
-        run_helper.rcopy(node, 'buildit.py', build_dir + '/' + target_dir, False)
+        run_helper.rcopy(node, 'buildit.sh', build_dir + target_dir, False)
         print 'build started on ' + node
-        exit_status = run_helper.run_command(node, 'cd ' + build_dir + '/' + target_dir + ' && ./buildit.py', False)
+        exit_status = run_helper.run_command(node, 'cd ' + build_dir + target_dir + ' && ./buildit.sh ' + prefix_path, False)
 
         check_exit_status(node, exit_status)
         ret_queue.put(exit_status)
@@ -118,6 +118,8 @@ def install_gluster(tarball):
             print 'unable to download ' + tarball + ' from bits.gluster.com, \n Exiting...'
             sys.exit(1)
 
+    prefix_path = run_helper.get_prefix_path()
+
     build_dir = run_helper.get_build_dir()
     if build_dir[-1] != '/':
         build_dir = build_dir + '/'
@@ -130,7 +132,7 @@ def install_gluster(tarball):
     ret_queue = Queue.Queue()
     threads = []
     for node in nodes:
-        t = threading.Thread(target=real_install_gluster, args=(node, tarball, build_dir, ret_queue))
+        t = threading.Thread(target=real_install_gluster, args=(node, tarball, build_dir, prefix_path, ret_queue))
         t.start()
         threads.append(t)
 

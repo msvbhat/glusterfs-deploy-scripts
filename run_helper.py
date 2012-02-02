@@ -44,6 +44,21 @@ def get_client_ip():
     return clients
 
 
+
+def get_prefix_path():
+    f = open('configfile', 'r')
+    configtext = f.read()
+    f.close()
+    match = re.search(r'PREFIX_PATH="(\S+)', configtext)
+    prefix_path = ''
+    if match:
+        prefix_path = match.group(1)
+
+    return prefix_path
+
+
+
+
 #get management node ip
 def get_mgmt_node():
     f = open('configfile', 'r')
