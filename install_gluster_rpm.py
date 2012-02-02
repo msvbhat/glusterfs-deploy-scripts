@@ -15,11 +15,18 @@ def usage():
 
 def install_rpm(node, version, rpms, ret_queue):
     flag = 0
+    failed_rpms = []
     for rpm in rpms:
         cmd = 'rpm -Uvh http://bits.gluster.com/pub/gluster/glusterfs/' + version + '/x86_64/glusterfs-' + rpm + '-' + version + '-1.x86_64.rpm'
-        status = run_helper.run_command(node, cmd, True)
+        status = run_helper.run_command(node, cmd, False)
         if status:
             flag = 1
+            failed_rpms.append(rpm)
+
+    if flag == 0:
+        print '%s: Installation complete. Following rpms are successfully installed:' % node + ' '  + ','.join(rpms)
+    else:
+        print '%s: Installation FAILED. Following rpms failed to install:' % node + ' ' + ','.join.(failed_rpms)
 
     ret_queue.put(flag)
 
@@ -93,12 +100,13 @@ def main():
         else:
             rpms = rpms
 
-    print 'WARNING: There are some know issues with this option. Please try',
+    print 'WARNING: There are some known issuew while installing from rpms using ,'
+    print 'this script. Please try ',
     print 'downloading the rpms and using run_helper.py to install rpms, ',
     print 'should you encounter the error.'
     status = install_gluster_rpms(rpms)
     if status:
-        print 'rpm installatin went Bananas in some machine. Please look into it.'
+        print 'rpm installation went bananas in some machine. Please look into it.'
 
     return status
 

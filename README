@@ -1,6 +1,6 @@
 These scripts can be used to install and deploy glusterfs in a cluster.
 It installs the specified version of glusterfs in all the nodes of the
-luster parallelly and reports back the result.
+cluster parallelly and reports back the result.
 It can be used to create and start a volume in big cluster. Specifications
 abou the volume can be set in configfile
 
@@ -26,7 +26,7 @@ This script can take 4 options which is listed below.
 For example:
 ./run_helper.py -r 'ifconfig'
 Above command runs ifconfig in all server machines and displayes the result
-in hist machine
+in host machine
 
 ./run_helper.py -R 'ifconfig'
 This runs above command in both servers and clients and display the result.

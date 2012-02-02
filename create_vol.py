@@ -63,11 +63,11 @@ def create_gluster_volume():
             server_index = server_index + 1
 
     replica_count = ''
-    if vol_type == 'dist-rep' or vol_type == 'stripe-rep' or vol_type == 'rep' or vol_type == 'dist-stripe-rep':
+    if vol_type in ('dist-rep', 'stripe-rep', 'rep', 'dist-stripe-rep'):
         replica_count = 'replica ' + run_helper.get_replica_count()
 
     stripe_count = ''
-    if vol_type == 'stripe' or vol_type == 'stripe-rep' or vol_type == 'dist-stripe-rep' or vol_type == 'dist-stripe':
+    if vol_type in ('stripe', 'stripe-rep', 'dist-stripe-rep', 'dist-stripe'):
         stripe_count = 'stripe ' + run_helper.get_stripe_count()
 
     vol_create_cmd = 'gluster volume create ' + volname + ' ' + replica_count + ' ' + stripe_count + ' ' + 'transport ' + trans_type + ' ' + ' '.join(brick_list) + ' --mode=script'
@@ -110,7 +110,8 @@ def start_gluster_volume():
     vol_start_cmd = 'gluster volume start ' + volname
     status = run_helper.run_command(mgmt_node, vol_start_cmd, True)
     if status:
-        print 'volume starting failed.'
+        print 'volume starting failed. Deleting the volume created...'
+        run_helper.run_command(mgmt_node, 'gluster volume delete ' + volname + ' --mode=script', True)
 
     return status
 

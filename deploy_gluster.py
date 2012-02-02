@@ -204,11 +204,11 @@ if __name__ == '__main__':
         tarball, git_head = prepare_git_source(branch)
         install_status = install_gluster(tarball)
     elif installation_way == "tarball":
-        print 'instaling from tarball...'
+        print 'installing from tarball...'
         install_status = main_installer()
     elif installation_way == "rpm":
         print 'installing from rpms...'
-        print 'WARNING: There are some know issues with this option. Please try',
+        print 'WARNING: There are some known issues with this option. Please try',
         print 'downloading the rpms and using run_helper.py to install rpms, ',
         print 'should you encounter the error.'
         rpms = ['core', 'fuse', 'geo-replication']
