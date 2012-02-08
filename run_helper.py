@@ -6,152 +6,141 @@ import paramiko
 import getopt
 
 
+
+def read_config_file():
+    global rh_config_dict
+
+    rh_config_dict = {}
+    f = open('configfile', 'r')
+    for line in f.readlines():
+        match = re.search(r'([\w]+)="([^"]+)"', line)
+        if  match:
+            key = match.group(1)
+            value = match.group(2)
+            rh_config_dict[key] = value
+    f.close()
+    return None
+
+
+
 def usage():
     print 'Usage: run_helper.py {[-c "file to be copied:path in destination machine"] [-r "command to be run"]}'
     return 0
 
 #get the ip address of the nodes from the config file 
 def get_nodes_ip():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-    match = re.search(r'SERVER_IP_ADDRS="([\w.,-]+)"', configtext)
-    if not match:
-        print 'unable to find the ip addresses of the machines'
+    try:
+        servers = rh_config_dict['SERVER_IP_ADDRS']
+    except:
+        print 'unable to retrive the server ip address from configfile. Please set SERVERS_IP_ADDRS in configfile'
         sys.exit(1)
 
-    servers = match.group(1).split(',')
-    nodes = []
-    for server in servers:
-        if server not in nodes:
-            nodes.append(server)
+    server_set = set([])
+    for server in servers.split(','):
+        server_set.add(server)
 
-    return nodes
+    return list(server_set)
 
 
 #get the client ip
 def get_client_ip():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-    match = re.search(r'CLIENT_IP_ADDRS="([\w.,-]+)"', configtext)
-    if not match:
-        print 'unable to find client IP address. Please set CLIENT_IP_ADDRS'
+    try:
+        clients = rh_config_dict['CLIENT_IP_ADDRS']
+    except:
+        print 'unable to find client IP address. Please set CLIENT_IP_ADDRS in configfile'
         sys.exit(1)
 
-    clients = match.group(1).split(',')
+    clients_set = set([])
+    for client in clients.split(','):
+        clients_set.add(client)
 
-    return clients
+    return list(clients_set)
 
 
-
+#get the prefix path to install gluster
 def get_prefix_path():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-    match = re.search(r'PREFIX_PATH="(\S+)', configtext)
-    prefix_path = ''
-    if match:
-        prefix_path = match.group(1)
+    try:
+        prefix_path = rh_config_dict['PREFIX_PATH']
+    except:
+        prefix_path = ''
 
     return prefix_path
 
 
 
-
 #get management node ip
 def get_mgmt_node():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
+    try:
+        mgmt_node = rh_config_dict['MGMT_NODE']
+    except:
+        mgmt_node = None
 
-    match = re.search(r'MGMT_NODE="([\w.-]+)"', configtext)
-    if not match:
-        print 'Unable to find the management node. Please set the MGMT_NODE in configfile'
-        sys.exit(1)
-
-    return match.group(1)
+    return mgmt_node
 
 
 #get the version of glusterfs
 def get_gluster_version():
-    fc = open('configfile', 'r')
-    configtext = fc.read()
-    fc.close()
-
-    tarball_match = re.search(r'GLUSTER_VERSION="(glusterfs-[\w.]+)"', configtext)
-    if not tarball_match:
+    try:
+        tarball = rh_config_dict['GLUSTER_VERSION']
+    except:
         print 'Unable to find the gluster version. Please set the GLUSTER_VERSION in config file'
         sys.exit(1)
-
-    tarball = tarball_match.group(1)
 
     return tarball
 
 
 def get_git_repo():
-    f = open('configfile', 'r')
-    configtext =f.read()
-    f.close()
-
-    match = re.search(r'GIT_REPO="(\S+)"', configtext)
-    if not match:
+    try:
+        git_repo = rh_config_dict['GIT_REPO']
+    except:
         print 'Unable to find the git repo. Please set the GIT_REPO in configfile'
         sys.exit(1)
 
-    return match.group(1)
+    return git_repo
 
 
 
 def get_build_dir():
-    fc = open('configfile' , 'r')
-    configtext = fc.read()
-    fc.close()
+    invalid_build_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/', '/var', '/var/', '/bin', '/bin/']
 
-    match = re.search(r'NODE_BUILD_DIR="(\S+)"', configtext)
-    if not match:
-        print 'Unable to find the build directory. Please set the proper NODE_BUILD_DIR in the config file'
-        sys.exit(1)
+    try:
+        build_dir = rh_config_dict['NODE_BUILD_DIR']
+        if build_dir in invalid_build_dir:
+            print build_dir + ' can not be build directory. Using /tmp/build-dir as build directory'
+            build_dir = '/tmp/build-dir'
+    except:
+        print 'Unable to find the build directory. Using /tmp/build-dir as build directory'
+        build_dir = '/tmp/build-dir'
 
-    return match.group(1)
+    return build_dir
 
 
 
 def get_server_export_dir():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-
-    match = re.search(r'SERVER_EXPORT_DIR="(\S+)"', configtext)
-    if not match:
+    try:
+        export_dir = rh_config_dict['SERVER_EXPORT_DIR']
+    except:
         print 'Unable to find the server export directory. Please set SERVER_EXPORT_DIR in configfile'
         sys.exit(1)
 
-    export_dir = match.group(1)
+    if export_dir[-1] == '/':
+        export_dir = export_dir[:-1]
     invalid_export_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/', '/var', '/var/', '/bin', '/bin/']
     if export_dir in invalid_export_dir:
         print export_dir + ' can NOT be the server export directory. Please give other valid directory'
         sys.exit(1)
 
-    if export_dir[-1] == '/':
-        export_dir = export_dir[:-1]
-
     return export_dir
 
 
 
-
 def get_volume_type():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-
-    match = re.search(r'VOL_TYPE="([\w-]+)"', configtext)
-    if not match:
+    try:
+        vol_type = rh_config_dict['VOL_TYPE']
+    except:
         print 'Unable to find the gluster volume type. Please set the VOL_TYPE in configfile to proper gluster volume type'
         sys.exit(1)
 
-    vol_type = match.group(1)
     supported_vol_types = ['dist', 'rep', 'stripe', 'dist-rep', 'stripe-rep', 'dist-stripe-rep', 'dist-stripe']
     if vol_type not in supported_vol_types:
         print vol_type + ' is not a supported gluster volume type. Please set the proper volume type'
@@ -161,32 +150,35 @@ def get_volume_type():
 
 
 def get_vol_name():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-
-    match = re.search(r'VOLNAME="(\S+)"', configtext)
-    if not match:
+    try:
+        volname = rh_config_dict['VOLNAME']
+    except:
         print 'Unable to find the volume name. Please set VOLNAME in configfile'
         sys.exit(1)
 
-    return match.group(1)
+    return volname
+
+
+
+
+
+def get_number_of_bricks():
+    try:
+        no_of_bricks = rh_config_dict['NO_OF_BRICKS']
+    except:
+        print 'Unable to get the number of bricks for volume. Please set NO_OF_BRICKS in configfile to proper value and retry'
+        sys.exit(1)
+
+    return no_of_bricks
+
 
 
 
 def get_replica_count():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-
-    match = re.search(r'REPLICA_COUNT="(\d+)"', configtext)
-    if not match:
+    try:
+        replica_count = rh_config_dict['REPLICA_COUNT']
+    except:
         print 'Unable to find the replica count. Please set the REPLICA_COUNT in configfile'
-        sys.exit(1)
-
-    replica_count = match.group(1)
-    if replica_count < '2':
-        print 'replica count can not be less than 2'
         sys.exit(1)
 
     return replica_count
@@ -194,18 +186,10 @@ def get_replica_count():
 
 
 def get_stripe_count():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-
-    match = re.search(r'STRIPE_COUNT="(\d+)"', configtext)
-    if not match:
+    try:
+        stripe_count = rh_config_dict['STRIPE_COUNT']
+    except:
         print 'Unable to find the stripe count. Please set the STRIPE_COUNT in configfile'
-        sys.exit(1)
-
-    stripe_count = match.group(1)
-    if stripe_count < '2':
-        print 'stripe count can not be less than 2'
         sys.exit(1)
 
     return stripe_count
@@ -213,16 +197,12 @@ def get_stripe_count():
 
 
 def get_trans_type():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-
-    match = re.search(r'TRANS_TYPE="([\w,]+)"', configtext)
-    if not match:
+    try:
+        trans_type = rh_config_dict['TRANS_TYPE']
+    except:
         print 'Unable to find the transport type. Please set the TRANS_TYPE in configfile to proper supported transport type'
         sys.exit(1)
 
-    trans_type = match.group(1)
     supported_trans_types = ['tcp', 'rdma', 'tcp,rdma']
     if trans_type not in supported_trans_types:
         print trans_type + ' is not a supported transport type. Please set the proper supported transport type'
@@ -233,16 +213,13 @@ def get_trans_type():
 
 
 def get_mountpoint():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-    match = re.search(r'MOUNTPOINT="(\S+)"', configtext)
-    if not match:
-        print 'unable to find the mount point'
+    try:
+        mountpoint = rh_config_dict['MOUNTPOINT']
+    except:
+        print 'unable to find the mount point. Please set the MOUNTPOINT in configfile'
         sys.exit(1)
 
-    mountpoint = match.group(1)
-    invalid_mountpoints = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/']
+    invalid_mountpoints = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/', '/var', '/var/', '/bin', '/bin/']
     if mountpoint in invalid_mountpoints:
         print mountpoint + ' is not a valid mountpoint. Please provide a valid mountpoint. Aborting...'
         sys.exit(1)
@@ -255,26 +232,20 @@ def get_mountpoint():
 
 
 def get_mount_type():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-    match = re.search(r'MOUNT_TYPE="(\w+)"', configtext)
-    if not match:
-        print 'unable to find the valid mount type. Please specify the mount type in configfile'
+    try:
+        mount_type = rh_config_dict['MOUNT_TYPE']
+    except:
+        print 'unable to find the valid mount type. Please set MOUNT_TYPE in configfile'
         sys.exit(1)
 
-    return match.group(1)
+    return mount_type
 
 
 
 def get_log_archive_dir():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-    match = re.search(r'LOG_ARCHIVE="(\S+)"', configtext)
-    if match:
-        log_archive = match.group(1)
-    else:
+    try:
+        log_archive = rh_config_dict['LOG_ARCHIVE']
+    except:
         print 'LOG_ARCHIVE is not set in configfile. Using "/tmp/sanity-run" as deafult log dir'
         log_archive = '/tmp/sanity-run'
 
@@ -284,31 +255,13 @@ def get_log_archive_dir():
 
 
 def get_send_mail_path():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-    match = re.search(r'EMAIL="(\S+)"', configtext)
-    if not match:
+    try:
+        email_path = rh_config_dict['EMAIL']
+    except:
         print 'EMAIL is not set in configfile. Not sending the results, just archiving'
         email_path = None
-    else:
-        email_path = match.group(1)
 
     return email_path
-
-
-
-def get_number_of_bricks():
-    f = open('configfile', 'r')
-    configtext = f.read()
-    f.close()
-    match = re.search(r'NO_OF_BRICKS="(\d+)"', configtext)
-    if not match:
-        print 'Unable to get the number of bricks for volume. Please set NO_OF_BRICKS in configfile to proper value and retry'
-        sys.exit(1)
-
-    return match.group(1)
-
 
 
 
@@ -419,5 +372,6 @@ def main():
     return 0
 
 
+read_config_file()
 if __name__ == '__main__':
     main()

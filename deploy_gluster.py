@@ -124,11 +124,6 @@ def install_gluster(tarball):
     if build_dir[-1] != '/':
         build_dir = build_dir + '/'
 
-    invalid_build_dir = ['/', '//', '/root', '/root/', '/usr', '/usr/', '/etc', '/etc/', '/sbin', '/sbin/', '/boot', '/boot/', '/opt', '/opt/']
-    if build_dir in invalid_build_dir:
-        print build_dir + ' can not be build directory. Please provide other build directory'
-        sys.exit(1)
-
     ret_queue = Queue.Queue()
     threads = []
     for node in nodes:

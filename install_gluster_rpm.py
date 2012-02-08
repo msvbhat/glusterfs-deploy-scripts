@@ -24,7 +24,7 @@ def install_rpm(node, version, rpms, ret_queue):
             failed_rpms.append(rpm)
 
     if flag == 0:
-        print '%s: Installation complete. Following rpms are successfully installed:' % node + ' '  + ','.join(rpms)
+        print '%s: Installation complete. Following rpms were successfully installed:' % node + ' '  + ','.join(rpms)
     else:
         print '%s: Installation FAILED. Following rpms failed to install:' % node + ' ' + ','.join.(failed_rpms)
 
@@ -100,10 +100,9 @@ def main():
         else:
             rpms = rpms
 
-    print 'WARNING: There are some known issuew while installing from rpms using ,'
-    print 'this script. Please try ',
-    print 'downloading the rpms and using run_helper.py to install rpms, ',
-    print 'should you encounter the error.'
+    print 'WARNING: There are some known issue while installing gluster rpms using ,'
+    print 'this script. Please try downloading the rpms and using run_helper.py ,'
+    print 'to install rpms should you encounter the error.'
     status = install_gluster_rpms(rpms)
     if status:
         print 'rpm installation went bananas in some machine. Please look into it.'

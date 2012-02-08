@@ -1,5 +1,5 @@
 #specify the IP addresses or hostnames of the server_ip nodes below separated by ',' as shown below.
-SERVER_IP_ADDRS="192.168.1.22,192.168.1.69,192.168.1.62"
+SERVER_IP_ADDRS="192.168.1.22,192.168.1.69,192.168.1.62,192.168.1.69"
 
 #Specify the IP address or hostnames of clients here.
 CLIENT_IP_ADDRS="192.168.1.64"
@@ -24,7 +24,7 @@ VOLNAME="hosdu"
 
 #specify the volume type here. Possible values are dist -- distributed , rep -- replicated , stripe -- striped,
 #dist-rep -- distributed-replicated , stripe-rep -- striped-replicated , dist-stripe --- distributed-stripe,
-dist-stripe-rep -- distibuted striped replicated
+#dist-stripe-rep -- distibuted striped replicated
 VOL_TYPE="dist-stripe-rep"
 
 #Specify the replica count here. Can be omitted for distribute only and stripe only volumes.
@@ -34,7 +34,7 @@ REPLICA_COUNT="2"
 STRIPE_COUNT="2"
 
 #specify the export bricks (backend disks) of the servers here. List the absolute path of the export directory.
-SERVER_EXPORT_DIR="/tmp/brick"
+SERVER_EXPORT_DIR="/tmp/bricks"
 
 #specify here number of bricks volume should have. remember it should match the stripe/replica count'
 NO_OF_BRICKS="8"
