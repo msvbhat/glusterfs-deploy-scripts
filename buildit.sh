@@ -1,7 +1,7 @@
 #!/bin/bash
 
 prefix=''
-if [ $# -ge 2 ]; then
+if [ $# -ge 1 ]; then
     prefix="--prefix=$1"
 fi
 

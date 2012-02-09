@@ -26,7 +26,7 @@ def install_rpm(node, version, rpms, ret_queue):
     if flag == 0:
         print '%s: Installation complete. Following rpms were successfully installed:' % node + ' '  + ','.join(rpms)
     else:
-        print '%s: Installation FAILED. Following rpms failed to install:' % node + ' ' + ','.join.(failed_rpms)
+        print '%s: Installation FAILED. Following rpms failed to install:' % node + ' ' + ','.join(failed_rpms)
 
     ret_queue.put(flag)
 
