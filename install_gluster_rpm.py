@@ -100,8 +100,8 @@ def main():
         else:
             rpms = rpms
 
-    print 'WARNING: There are some known issue while installing gluster rpms using ,'
-    print 'this script. Please try downloading the rpms and using run_helper.py ,'
+    print 'WARNING: There are some known issue while installing gluster rpms using ',
+    print 'this script. Please try downloading the rpms and using run_helper.py ',
     print 'to install rpms should you encounter the error.'
     status = install_gluster_rpms(rpms)
     if status:
